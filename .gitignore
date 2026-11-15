@@ -1,0 +1,17 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+*.auto.tfvars
+terraform.tfvars
+.terraformrc
+terraform.rc
+.aws/
+.env
+.env.*
+__pycache__/
+.DS_Store
+dist/
+site/
+reports/

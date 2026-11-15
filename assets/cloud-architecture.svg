@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" role="img" aria-labelledby="title desc">
+<title id="title">Cloud portfolio architecture</title><desc id="desc">Route 53 resolves abdullahiomer.com to CloudFront. A browser requests website files through CloudFront over HTTPS. CloudFront uses origin access control to read a private S3 bucket. ACM provides the custom-domain certificate.</desc>
+<rect width="1000" height="760" fill="#142327"/>
+<g fill="none" stroke="#536265"><path d="M42 42h916v676H42z"/><path d="M500 290v60M500 440v60M295 210h65M818 286v109H640"/></g>
+<g font-family="Arial, Helvetica, sans-serif" fill="#f1f0eb">
+<text x="70" y="92" font-size="13" letter-spacing="2">CLOUD DEVELOPMENT / ARCHITECTURE</text>
+<text x="70" y="146" font-size="39" font-weight="300">A portfolio, built on AWS.</text>
+<g fill="#1b3036" stroke="#788a8c"><rect x="70" y="174" width="225" height="112"/><rect x="360" y="174" width="280" height="112"/><rect x="705" y="174" width="225" height="112"/><rect x="360" y="350" width="280" height="90"/><rect x="280" y="500" width="440" height="112"/></g>
+<g text-anchor="middle"><text x="182" y="215" font-size="23">Route 53</text><text x="182" y="248" font-size="13" fill="#bbc5c3">DNS lookup → CloudFront</text>
+<text x="500" y="215" font-size="23">Browser</text><text x="500" y="248" font-size="15" fill="#bbc5c3">abdullahiomer.com</text>
+<text x="818" y="215" font-size="23">ACM</text><text x="818" y="248" font-size="13" fill="#bbc5c3">Certificate for CloudFront</text>
+<text x="500" y="389" font-size="24">CloudFront</text><text x="500" y="416" font-size="14" fill="#bbc5c3">HTTPS delivery + caching</text>
+<text x="500" y="544" font-size="24">Private S3 origin</text><text x="500" y="578" font-size="15" fill="#bbc5c3">HTML / CSS / JavaScript / Images</text></g>
+<text x="516" y="325" font-size="13" fill="#bbc5c3">↓ HTTPS request</text><text x="516" y="479" font-size="13" fill="#bbc5c3">↓ Origin access control</text>
+<text x="70" y="658" font-size="13" fill="#bbc5c3">Terraform defines hosting resources · AWS provider: us-east-1</text><text x="70" y="687" font-size="12" fill="#bbc5c3">AWS configuration checked November 14, 2026 / Dated snapshot</text>
+</g></svg>
