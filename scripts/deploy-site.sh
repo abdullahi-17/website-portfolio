@@ -3,7 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 : "${AWS_S3_BUCKET:?Set AWS_S3_BUCKET}"
 : "${AWS_CLOUDFRONT_DISTRIBUTION_ID:?Set AWS_CLOUDFRONT_DISTRIBUTION_ID}"
-bash scripts/package-site.sh
+# Deploy the downloaded CI artifact. Never rebuild it from the checkout.
+python3 scripts/validate-package.py site
 # Upload dependencies first and the entry pages last. No broad sync or deletion.
 aws s3 sync site/assets/ "s3://${AWS_S3_BUCKET}/assets/" --cache-control 'public,max-age=3600'
 for file in styles.css content.js main.js; do

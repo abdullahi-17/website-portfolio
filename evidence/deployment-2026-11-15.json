@@ -1,0 +1,74 @@
+{
+  "source": "GitHub Actions run metadata and deployment-measurements artifact",
+  "run_url": "https://github.com/abdullahi-17/website-portfolio/actions/runs/43687661256",
+  "run_id": 43687661256,
+  "commit": "ad02784aec50faa3cf05f9885ec0c55944891009",
+  "created_at": "2026-11-15T06:56:05Z",
+  "completed_at": "2026-11-15T06:56:50Z",
+  "conclusion": "success",
+  "jobs": {
+    "check": "success",
+    "deploy": "success"
+  },
+  "verified_steps": [
+    "Site syntax and local-link checks",
+    "Allowlisted public-file packaging",
+    "AWS OIDC authentication",
+    "AWS account verification",
+    "S3 upload and completed CloudFront invalidation",
+    "HTTPS checks for home page, cloud case study and shared assets"
+  ],
+  "delivery": {
+    "measured_at": "2026-11-15T06:56:46.424167+00:00",
+    "base_url": "https://abdullahiomer.com",
+    "method": "Single curl request per URL from this runner; not Core Web Vitals or uptime.",
+    "results": [
+      {
+        "path": "/",
+        "http_status": 200,
+        "dns_seconds": 0.074603,
+        "time_to_first_byte_seconds": 0.214359,
+        "total_seconds": 0.214843,
+        "bytes": 10776,
+        "error": null
+      },
+      {
+        "path": "/project.html?id=cloud-portfolio",
+        "http_status": 200,
+        "dns_seconds": 0.000542,
+        "time_to_first_byte_seconds": 0.12912,
+        "total_seconds": 0.129151,
+        "bytes": 1560,
+        "error": null
+      },
+      {
+        "path": "/styles.css",
+        "http_status": 200,
+        "dns_seconds": 0.000463,
+        "time_to_first_byte_seconds": 0.156419,
+        "total_seconds": 0.157051,
+        "bytes": 15309,
+        "error": null
+      },
+      {
+        "path": "/main.js",
+        "http_status": 200,
+        "dns_seconds": 0.000497,
+        "time_to_first_byte_seconds": 0.156052,
+        "total_seconds": 0.156391,
+        "bytes": 9469,
+        "error": null
+      },
+      {
+        "path": "/content.js",
+        "http_status": 200,
+        "dns_seconds": 0.000537,
+        "time_to_first_byte_seconds": 0.188728,
+        "total_seconds": 0.191049,
+        "bytes": 21829,
+        "error": null
+      }
+    ]
+  },
+  "terraform_state_migration": "Not applied; website deployment did not modify Terraform state or DNS."
+}

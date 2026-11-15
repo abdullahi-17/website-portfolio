@@ -21,9 +21,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - run: node --check content.js && node --check main.js
       - run: python3 scripts/check-site.py
+      - name: Test artifact-only deployment and package safety
+        run: python3 -m unittest discover -s tests -p '*_test.py'
       - run: bash scripts/package-site.sh
+      - name: Test the packaged website in desktop and mobile Chromium
+        run: npm test
+      - name: Save browser reports and failure traces
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-test-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
           name: website
@@ -44,6 +61,13 @@ jobs:
       AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
     steps:
       - uses: actions/checkout@v4
+      - name: Download the website package that passed CI
+        uses: actions/download-artifact@v4
+        with:
+          name: website
+          path: site/
+      - name: Validate the downloaded package
+        run: python3 scripts/validate-package.py site
       - name: Check deployment configuration
         run: test -n "$AWS_ROLE_ARN" || { echo 'Set the repository variable AWS_ROLE_ARN from Terraform output github_deploy_role_arn'; exit 1; }
       - uses: aws-actions/configure-aws-credentials@v4

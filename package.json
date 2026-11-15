@@ -1,0 +1,14 @@
+{
+  "name": "abdullahi-omer-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser checks for the buildless portfolio; no runtime dependencies.",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report",
+    "check": "node --check content.js && node --check main.js && python3 scripts/check-site.py"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1"
+  }
+}

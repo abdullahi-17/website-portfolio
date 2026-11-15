@@ -1,0 +1,114 @@
+{
+  "source": "Connected AWS Core: CloudWatch GetMetricData and Cost Explorer GetCostAndUsage",
+  "captured_at": "2026-11-14T19:46:16.370865+00:00",
+  "distribution_id": "E29CBZ3Y177V29",
+  "period": {
+    "start": "2026-11-07T19:46:16.370865+00:00",
+    "end": "2026-11-14T19:46:16.370865+00:00"
+  },
+  "daily_request_sums": [
+    2895,
+    5713,
+    410,
+    2337,
+    2088,
+    2725,
+    1516
+  ],
+  "daily_average_5xx_error_rates_percent": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "metric_status": "Complete",
+  "limitations": "Sum of returned daily buckets, not unique visitors or uptime. Data does not prove which front-end version served those requests.",
+  "costs": {
+    "start": "2026-10-01",
+    "end_exclusive": "2026-11-01",
+    "estimated": false,
+    "metric": "UnblendedCost",
+    "currency": "USD",
+    "excluded_record_types": [
+      "Credit",
+      "Refund"
+    ],
+    "scope": "Account-wide service excerpts; NOT portfolio-isolated cost and NOT a total AWS bill. Missing services must not be interpreted as zero.",
+    "services": {
+      "Amazon Simple Storage Service": "0.1336420923",
+      "AmazonCloudWatch": "0.00016"
+    }
+  },
+  "verification": {
+    "route53": "A and AAAA aliases resolve to the active CloudFront distribution",
+    "certificate": "ACM ISSUED, custom-domain TLSv1.2_2021",
+    "bucket_public_access": "All four public-access restrictions enabled",
+    "bucket_policy": "CloudFront distribution-specific SourceArn condition verified",
+    "oidc_subject": "Exact immutable repository ID subject restricted to main",
+    "iam_simulation": {
+      "website_put": "allowed",
+      "terraform_state_put": "implicitDeny",
+      "website_delete": "implicitDeny",
+      "live_distribution_invalidation": "allowed"
+    },
+    "dashboard": "Created and read back; four widgets",
+    "alarm": "Created; initially INSUFFICIENT_DATA; no SNS notification target"
+  },
+  "activation": "Workflow file is local and has not executed in GitHub. Terraform imports are prepared but not applied.",
+  "request_total": 17684,
+  "pre_release_delivery": {
+    "measured_at": "2026-11-14T19:53:02.762050+00:00",
+    "base_url": "https://abdullahiomer.com",
+    "method": "Single curl request per URL from this runner; not Core Web Vitals or uptime.",
+    "results": [
+      {
+        "path": "/",
+        "http_status": 200,
+        "dns_seconds": 0.090725,
+        "time_to_first_byte_seconds": 0.324128,
+        "total_seconds": 0.335376,
+        "bytes": 29298,
+        "error": null
+      },
+      {
+        "path": "/project.html?id=cloud-portfolio",
+        "http_status": 403,
+        "dns_seconds": 0.002171,
+        "time_to_first_byte_seconds": 0.157913,
+        "total_seconds": 0.158922,
+        "bytes": 0,
+        "error": "curl: (56) The requested URL returned error: 403\n"
+      },
+      {
+        "path": "/styles.css",
+        "http_status": 403,
+        "dns_seconds": 0.002209,
+        "time_to_first_byte_seconds": 0.152113,
+        "total_seconds": 0.152134,
+        "bytes": 0,
+        "error": "curl: (56) The requested URL returned error: 403\n"
+      },
+      {
+        "path": "/main.js",
+        "http_status": 403,
+        "dns_seconds": 0.002281,
+        "time_to_first_byte_seconds": 0.145337,
+        "total_seconds": 0.145359,
+        "bytes": 0,
+        "error": "curl: (56) The requested URL returned error: 403\n"
+      },
+      {
+        "path": "/content.js",
+        "http_status": 403,
+        "dns_seconds": 0.003055,
+        "time_to_first_byte_seconds": 0.147792,
+        "total_seconds": 0.147814,
+        "bytes": 0,
+        "error": "curl: (56) The requested URL returned error: 403\n"
+      }
+    ]
+  }
+}
