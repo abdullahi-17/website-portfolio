@@ -57,7 +57,13 @@ Playwright starts a temporary server for `site/` and checks desktop (1440px), mo
 
 Use `npm run test:report` to open the local HTML report. CI saves browser reports and failure screenshots/traces for 14 days.
 
-The check job packages the website once, tests that package and uploads it as the `website` artifact. The deploy job downloads and validates that artifact, then publishes it without repackaging. `scripts/deploy-site.sh` intentionally fails if the package is missing or contains unexpected files. Deployment tests use a fake AWS CLI and make no AWS changes.
+The check job packages the website once, tests that package and uploads it as the `website-<commit SHA>` artifact. The deploy job downloads and validates that artifact, then publishes it without repackaging. `scripts/deploy-site.sh` intentionally fails if the package is missing or contains unexpected files. Deployment tests use a fake AWS CLI and make no AWS changes.
+
+## Rollback
+
+Use **Actions → Rollback portfolio** on `main`, supplying a successful deployment run ID and its full commit SHA. The workflow validates the release before AWS authentication, restores its retained artifact, refreshes CloudFront and checks the live URLs. Releases are labelled with their commit and request 90-day retention. Rollbacks and deployments share a production lock.
+
+See [docs/rollback.md](docs/rollback.md) for the procedure, safeguards and limitations.
 
 ## Current project order
 

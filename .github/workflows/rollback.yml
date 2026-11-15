@@ -1,0 +1,85 @@
+name: Rollback portfolio
+run-name: Restore ${{ inputs.expected_commit }} from run ${{ inputs.source_run_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful main deployment run ID to restore
+        required: true
+        type: string
+      expected_commit:
+        description: Full 40-character commit SHA from that deployment
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  rollback:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: portfolio-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: abdullahiomer.com
+      AWS_CLOUDFRONT_DISTRIBUTION_ID: E29CBZ3Y177V29
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate source deployment, commit and retained artifact
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+        run: python3 scripts/release.py --run-id "$SOURCE_RUN_ID" --commit "$EXPECTED_COMMIT"
+      - name: Download the selected release
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.release.outputs.artifact_name }}
+          run-id: ${{ steps.release.outputs.source_run_id }}
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: site/
+      - name: Validate the restored package before requesting AWS access
+        run: python3 scripts/validate-package.py site
+      - name: Check deployment configuration
+        run: test -n "$AWS_ROLE_ARN" || { echo 'Missing repository variable AWS_ROLE_ARN'; exit 1; }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Verify deployment account
+        run: test "$(aws sts get-caller-identity --query Account --output text)" = '043309365882'
+      - name: Restore website files and refresh CloudFront
+        run: bash scripts/deploy-site.sh
+      - name: Verify restored public URLs
+        run: python3 scripts/measure-site.py https://abdullahiomer.com
+      - name: Record restored release in the run summary
+        env:
+          RELEASE_COMMIT: ${{ steps.release.outputs.commit }}
+          SOURCE_RUN_URL: ${{ steps.release.outputs.source_run_url }}
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          Restored commit: $RELEASE_COMMIT
+
+          Source deployment: $SOURCE_RUN_URL
+
+          Website: https://abdullahiomer.com
+          EOF
+      - name: Save rollback selection and delivery evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rollback-evidence-${{ github.run_id }}
+          path: reports/
+          retention-days: 90
+          if-no-files-found: ignore

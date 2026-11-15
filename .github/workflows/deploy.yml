@@ -43,7 +43,8 @@ jobs:
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
-          name: website
+          name: website-${{ github.sha }}
+          retention-days: 90
           path: site/
           if-no-files-found: error
 
@@ -51,6 +52,9 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: check
     runs-on: ubuntu-latest
+    concurrency:
+      group: portfolio-production
+      cancel-in-progress: false
     permissions:
       contents: read
       id-token: write
@@ -64,7 +68,7 @@ jobs:
       - name: Download the website package that passed CI
         uses: actions/download-artifact@v4
         with:
-          name: website
+          name: website-${{ github.sha }}
           path: site/
       - name: Validate the downloaded package
         run: python3 scripts/validate-package.py site
@@ -79,6 +83,15 @@ jobs:
       - run: bash scripts/deploy-site.sh
       - name: Check deployed pages and record delivery timings
         run: python3 scripts/measure-site.py https://abdullahiomer.com
+      - name: Record the release for future rollback
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          Deployed commit: $GITHUB_SHA
+
+          Source run ID: $GITHUB_RUN_ID
+
+          Retained artifact: website-$GITHUB_SHA (90 days, subject to repository policy)
+          EOF
       - uses: actions/upload-artifact@v4
         if: always()
         with:

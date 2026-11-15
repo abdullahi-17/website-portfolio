@@ -59,8 +59,8 @@ Workflow: `.github/workflows/deploy.yml`. This is the active deployment workflow
 
 - Pull requests check syntax, local links, package safety, artifact-only deployment behavior and browser interactions without AWS access.
 - Main pushes or manual runs on main assume the scoped OIDC role.
-- The check job creates `site/` once and runs Playwright against that exact directory at 1440, 390 and 320 pixels. It uploads the `website` artifact only after those checks pass.
-- The deployment job downloads `website` into `site/` and validates it. It does not rebuild or copy website source files from the checkout.
+- The check job creates `site/` once and runs Playwright against that exact directory at 1440, 390 and 320 pixels. It uploads the `website-<commit SHA>` artifact only after those checks pass.
+- The deployment job downloads that run’s `website-<commit SHA>` artifact into `site/` and validates it. It does not rebuild or copy website source files from the checkout.
 - Dependencies upload first, entry pages last, then CloudFront invalidation completes.
 - Post-deployment checks verify the home page, case-study URL and shared assets over HTTPS.
 - Browser HTML reports and failure traces/screenshots are retained as `browser-test-results` for 14 days. Deployment measurements are retained separately. Test tools and reports are never uploaded to the website.
@@ -97,7 +97,7 @@ npm test
 
 The workflow now uses one tested package for deployment. Local verification passed 33 Chromium tests across three viewport configurations and five deployment/package-safety tests. The deployment tests check that changing the source after packaging cannot alter uploaded files, a missing artifact fails before AWS is called, unexpected private files block deployment, stale files are removed during packaging, and symlinked assets are rejected.
 
-The historical November 15 run linked above predates these additional checks. A subsequent workflow run must verify this updated pipeline in GitHub. Rollback, branch protection, alarm notifications and Terraform state reconciliation remain separate follow-up work.
+The historical November 15 run linked above predates these additional checks. A subsequent workflow run must verify this updated pipeline in GitHub. Manual rollback is now implemented in `.github/workflows/rollback.yml`; see [the rollback runbook](rollback.md). Branch protection, alarm notifications and Terraform state reconciliation remain separate follow-up work.
 
 ## 3. Monitoring, measurements and costs
 
