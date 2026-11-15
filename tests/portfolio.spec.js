@@ -39,6 +39,7 @@ test('navigation reaches each section', async ({ page }) => {
 test('gallery preserves order and opens the school project', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.work-card h3')).toHaveText(projects.map(([, title]) => `${title} ↗`));
+  await expect(page.locator('.work-card').nth(2).getByRole('link')).toHaveAttribute('href', 'https://spendwise.abdullahiomer.com');
   await page.getByRole('button', { name: 'Cloud & Development', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Cloud & Development', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.work-card:visible')).toHaveCount(4);
