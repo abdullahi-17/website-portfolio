@@ -22,3 +22,5 @@ if Path('assets').is_symlink():
 shutil.copytree('assets', package / 'assets', symlinks=True)
 PY
 python3 scripts/validate-package.py site
+npm run build:motion
+python3 scripts/validate-package.py site

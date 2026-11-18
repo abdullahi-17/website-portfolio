@@ -35,6 +35,9 @@ if sys.argv[1:3] == ['cloudfront', 'create-invalidation']:
     print('TEST-INVALIDATION')
 ''')
         aws.chmod(0o755)
+        npm = self.root / 'bin' / 'npm'
+        npm.write_text('#!/bin/sh\nprintf "// Checked motion bundle" > site/assets/portfolio-motion.js\n')
+        npm.chmod(0o755)
         self.log = self.root / 'aws-calls.jsonl'
         self.environment = {
             **os.environ,

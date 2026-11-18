@@ -2,13 +2,22 @@
   "name": "abdullahi-omer-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Browser checks for the buildless portfolio; no runtime dependencies.",
+  "description": "Static portfolio and its browser checks",
   "scripts": {
     "test": "playwright test",
     "test:report": "playwright show-report",
-    "check": "node --check content.js && node --check main.js && python3 scripts/check-site.py"
+    "check": "node --check content.js && node --check main.js && python3 scripts/check-site.py",
+    "build:motion": "esbuild portfolio-motion.jsx --bundle --format=esm --jsx=automatic --minify --outfile=site/assets/portfolio-motion.js"
   },
   "devDependencies": {
-    "@playwright/test": "1.65.1"
+    "@playwright/test": "1.65.1",
+    "esbuild": "0.28.1"
+  },
+  "dependencies": {
+    "@gsap/react": "2.1.2",
+    "gsap": "3.15.1",
+    "lenis": "1.3.27",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

@@ -16,6 +16,8 @@ for path in package.rglob('*'):
     if path.is_symlink():
         raise SystemExit(f'Symlinks are not allowed in the deployment: {path}')
     relative = path.relative_to(package)
+    if relative.as_posix() == 'assets/portfolio-motion.js' and path.is_file():
+        continue
     if relative.parts[0] == 'assets':
         if path.is_file() and (path.name.startswith('.') or path.suffix.lower() not in asset_types):
             raise SystemExit(f'Unexpected public asset: {relative}')

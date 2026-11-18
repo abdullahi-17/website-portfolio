@@ -27,15 +27,12 @@ if (contacts) {
   });
 }
 
-const gallery = document.querySelector("#work-gallery");
-if (gallery) {
+const workList = document.querySelector("#work-gallery");
+if (workList) {
   portfolio.projects.forEach((project, index) => {
     const card = document.createElement("article");
     card.className = "work-card";
     card.dataset.category = project.category;
-    const link = document.createElement("a");
-    link.href =
-      project.url || `project.html?id=${encodeURIComponent(project.id)}`;
     const image = document.createElement("img");
     Object.assign(image, {
       src: project.image,
@@ -54,78 +51,34 @@ if (gallery) {
     number.textContent = String(index + 1).padStart(2, "0");
     meta.append(category, number);
     const title = document.createElement("h3");
-    title.textContent = `${project.title} ↗`;
+    title.textContent = project.title;
     const description = document.createElement("p");
     description.textContent = project.description;
     const status = document.createElement("span");
     status.className = "card-status";
     status.textContent = project.status;
-    link.append(image, meta, title, description, status);
-    card.append(link);
-    gallery.append(card);
-  });
-  const arrows = [...document.querySelectorAll("[data-scroll]")];
-  function updateArrows() {
-    arrows.forEach((button) => {
-      button.disabled =
-        Number(button.dataset.scroll) < 0
-          ? gallery.scrollLeft < 2
-          : gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 2;
+    const copy = document.createElement("div");
+    copy.className = "work-copy";
+    copy.append(meta, title, status, description);
+    project.workOverview.forEach((detail) => {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = detail;
+      copy.append(paragraph);
     });
-  }
-  document.querySelectorAll("[data-filter]").forEach((button) => {
-    button.addEventListener("click", () => {
-      document
-        .querySelectorAll("[data-filter]")
-        .forEach((item) =>
-          item.setAttribute("aria-pressed", String(item === button)),
-        );
-      gallery.querySelectorAll(".work-card").forEach((card) => {
-        card.hidden =
-          button.dataset.filter !== "all" &&
-          card.dataset.category !== button.dataset.filter;
-      });
-      gallery.scrollLeft = 0;
-      updateCount();
-      updateArrows();
-    });
+    if (project.url) {
+      const link = document.createElement("a");
+      link.className = "text-link";
+      link.href = project.url;
+      link.textContent = `Visit ${project.title} ↗`;
+      copy.append(link);
+    }
+    card.append(image, copy);
+    workList.append(card);
   });
-  function updateCount() {
-    const count = gallery.querySelectorAll(".work-card:not([hidden])").length;
-    document.querySelector("#work-count").textContent = String(count).padStart(
-      2,
-      "0",
-    );
-    document.querySelector("#work-status").textContent =
-      `${count} ${count === 1 ? "entry" : "entries"} / Includes planned work and disclosed AI assistance`;
-  }
-  function scrollGallery(direction) {
-    const card = gallery.querySelector(".work-card:not([hidden])");
-    if (!card) return;
-    const gap = parseFloat(getComputedStyle(gallery).gap);
-    gallery.scrollBy({
-      left: direction * (card.getBoundingClientRect().width + gap),
-      behavior: reducedMotion() ? "instant" : "smooth",
-    });
-  }
-  arrows.forEach((button) =>
-    button.addEventListener("click", () =>
-      scrollGallery(Number(button.dataset.scroll)),
-    ),
-  );
-  gallery.addEventListener("keydown", (event) => {
-    if (
-      event.target !== gallery ||
-      !["ArrowLeft", "ArrowRight"].includes(event.key)
-    )
-      return;
-    event.preventDefault();
-    scrollGallery(event.key === "ArrowRight" ? 1 : -1);
-  });
-  gallery.addEventListener("scroll", updateArrows, { passive: true });
-  window.addEventListener("resize", updateArrows);
-  updateCount();
-  updateArrows();
+  const count = portfolio.projects.length;
+  document.querySelector("#work-count").textContent = String(count).padStart(2, "0");
+  document.querySelector("#work-status").textContent =
+    `${count} ${count === 1 ? "entry" : "entries"} / Includes disclosed AI assistance`;
 }
 
 const casePage = document.querySelector("#case-content");
@@ -139,7 +92,9 @@ if (casePage) {
       "Return to selected work to choose an available project.";
   } else {
     document.title = `${project.title} — Abdullahi Omer`;
-    document.querySelector("#case-title").textContent = project.title;
+    const title = document.querySelector("#case-title");
+    title.textContent = project.title;
+    if (id === "cloud-portfolio") title.dataset.splitTitle = "";
     document.querySelector("#case-category").textContent =
       `${project.categoryLabel} / ${project.status}`;
     document.querySelector("#case-summary").textContent = project.description;
@@ -158,11 +113,10 @@ if (casePage) {
               ? project.tools.join(" / ")
               : "To add: tools actually used in this project.",
           ],
+          ...(project.architecture ? [["Architecture", project.architecture]] : []),
           ["Decisions", project.decisions],
           ["Implementation", project.implementation],
         ];
-    if (!project.sections && project.architecture)
-      sections.push(["Architecture", project.architecture]);
     if (project.architectureNote)
       sections.push(["DNS & certificate", project.architectureNote]);
     if (project.deployment) sections.push(["Deployment", project.deployment]);
@@ -256,4 +210,13 @@ if (imageStack) {
   document.addEventListener("pointerdown", (event) => {
     if (!imageStack.contains(event.target)) expandImages(false);
   });
+}
+
+
+// Keep project content and controls available if the optional motion bundle fails.
+const splitTitle = document.querySelector("[data-split-title]");
+if ((workList || splitTitle) && !reducedMotion()) {
+  import("./assets/portfolio-motion.js")
+    .then(({ initMotion }) => initMotion({ homepage: Boolean(workList), splitTitle }))
+    .catch(() => {});
 }

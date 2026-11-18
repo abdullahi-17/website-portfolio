@@ -25,12 +25,10 @@ No Azure connection, SQL execution, Power BI refresh or current deployment check
 
 ## 3. Spendwise
 
-The owner requested the title and said development will come later. No app purpose, feature set, stack or accomplishments were inferred from its name. The project page intentionally contains only status, undefined scope and the next planning step.
+The overview describes the simulated browser demo based on the SpendWise repository README and its November 16, 2026 release record. It identifies the API Gateway and Lambda service as optional.
 
-## 4. Paper trading system
+## SpendWise project image
 
-Included as a fourth, explicitly AI-assisted exploration rather than an independently authored development claim. The owner stated that AI did most of the work.
+The project card uses `assets/spendwise-demo.png`, copied from `docs/images/demo-mobile.png` in [the SpendWise repository](https://github.com/abdullahi-17/spendwise/blob/main/docs/images/demo-mobile.png) on November 16, 2026. It shows the actual browser demo with a sample purchase, not a completed transaction. The original screenshot is retained without image edits; the existing card layout crops it for display.
 
-Reviewed the connected private repository README and the local checkout's `CLAUDE.md` and `infra/template.yaml`. The local guidance corrects drift in the README, including the distinction between the Lambda Alpaca paper path and a separate container-based IBKR path. The portfolio describes only the former. It does not claim current deployment status, strategy performance, test counts, profitability or personal implementation responsibilities that have not been documented.
-
-The diagram is an explanatory SVG based on the reviewed Lambda architecture, not a screenshot of a live system. No private source files, credentials, order details or strategy parameters are copied into the portfolio. The private repository is represented as text, without a public source link. No trading actions or deployments were performed.
+The SpendWise card now uses `assets/SpendWise Logo on White.png`, supplied by Abdullahi on November 16, 2026. This replaces the demo screenshot as the project cover.

@@ -3,8 +3,7 @@ const { test: base, expect } = require('@playwright/test');
 const projects = [
   ['cloud-portfolio', 'Portfolio website'],
   ['azure-retail-pipeline', 'Azure retail data pipeline'],
-  ['spendwise', 'Spendwise'],
-  ['paper-trading', 'Paper trading pipeline']
+  ['spendwise', 'SpendWise']
 ];
 
 const test = base.extend({
@@ -28,7 +27,7 @@ async function expectPageFits(page) {
 
 test('navigation reaches each section', async ({ page }) => {
   await page.goto('/');
-  for (const [name, id] of [['Work', 'work'], ['Phase 1', 'phase1'], ['About', 'about'], ['Contact', 'contact']]) {
+  for (const [name, id] of [['Work', 'work'], ['Skills', 'skills'], ['Phase 1', 'phase1'], ['About', 'about'], ['Contact', 'contact']]) {
     await page.getByRole('navigation').getByRole('link', { name, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`#${id}$`));
     await expect(page.locator(`#${id}`)).toBeInViewport();
@@ -36,30 +35,24 @@ test('navigation reaches each section', async ({ page }) => {
   await expectPageFits(page);
 });
 
-test('gallery preserves order and opens the school project', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('.work-card h3')).toHaveText(projects.map(([, title]) => `${title} ↗`));
-  await expect(page.locator('.work-card').nth(2).getByRole('link')).toHaveAttribute('href', 'https://spendwise.abdullahiomer.com');
-  await page.getByRole('button', { name: 'Cloud & Development', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Cloud & Development', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.work-card:visible')).toHaveCount(4);
-  await page.getByRole('button', { name: 'All work', exact: true }).click();
-  await page.locator('.work-card a[href="project.html?id=azure-retail-pipeline"]').click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Azure retail data pipeline');
-  await page.getByRole('link', { name: '← Selected work', exact: true }).click();
-  await expect(page).toHaveURL(/index\.html#work$/);
-});
-
-test('gallery buttons and arrow keys scroll the work', async ({ page }) => {
-  await page.goto('/');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const gallery = page.locator('#work-gallery');
-  await page.getByRole('button', { name: 'Next work', exact: true }).click();
-  await expect.poll(() => gallery.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
-  await gallery.focus();
-  await gallery.press('ArrowLeft');
-  await expect.poll(() => gallery.evaluate(element => element.scrollLeft)).toBeLessThan(2);
-  await expect(page.getByRole('button', { name: 'Previous work', exact: true })).toBeDisabled();
+test('project overviews stack in order and only SpendWise links out', async ({ page }, testInfo) => {
+  await page.goto('/#work');
+  const cards = page.locator('.work-card');
+  await expect(cards.locator('h3')).toHaveText(projects.map(([, title]) => title));
+  await expect(cards.locator('.work-copy p')).toHaveCount(projects.length * 3);
+  await expect(cards.getByRole('link')).toHaveCount(1);
+  await expect(cards.last().getByRole('link')).toHaveAttribute('href', 'https://spendwise.abdullahiomer.com');
+  for (let index = 0; index < projects.length; index++) {
+    const card = cards.nth(index);
+    await card.scrollIntoViewIfNeeded();
+    const image = await card.locator('img').boundingBox();
+    const copy = await card.locator('.work-copy').boundingBox();
+    expect(Math.abs(image.width - copy.width)).toBeLessThan(2);
+    expect(image.x < copy.x).toBe(index % 2 === 0);
+    expect(Math.min(image.y + image.height, copy.y + copy.height)).toBeGreaterThan(Math.max(image.y, copy.y));
+  }
+  await expectPageFits(page);
+  await page.locator('#work').screenshot({ path: testInfo.outputPath('selected-work.png') });
 });
 
 test('image fan expands and retracts by hover or touch', async ({ page, isMobile }) => {
@@ -113,15 +106,55 @@ for (const [id, title] of projects) {
     await expect(page.locator('#case-image')).toBeVisible();
     await expect.poll(() => page.locator('#case-image').evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
     await expect(page.locator('.case-section').first()).toBeVisible();
-    if (id === 'spendwise') await expect(page.locator('#case-content')).toContainText('Development has not started');
-    if (id === 'paper-trading') await expect(page.locator('#case-content')).toContainText('Most of the implementation was produced by AI');
+    if (id === 'spendwise') await expect(page.locator('#case-content')).toContainText('published browser demo');
     await expectPageFits(page);
   });
 }
 
-test('unknown project has a recovery link', async ({ page }) => {
-  await page.goto('/project.html?id=not-a-project');
+test('the removed project route has a recovery link', async ({ page }) => {
+  await page.goto('/project.html?id=paper-trading');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Project not found');
   await page.getByRole('link', { name: '← Selected work', exact: true }).click();
   await expect(page.locator('#work-gallery')).toBeVisible();
+});
+
+test('motion keeps navigation and the case heading intact', async ({ page }, testInfo) => {
+  await page.goto('/#work');
+  await expect(page.locator('html')).toHaveClass(/\blenis\b/);
+  // Activate the native anchor without Playwright first scrolling the header into view.
+  await page.getByRole('navigation').getByRole('link', { name: 'About' }).evaluate(link => link.click());
+  await expect(page).toHaveURL(/#about$/);
+  await expect(page.locator('#about')).toBeInViewport();
+  await page.goBack();
+  await expect(page).toHaveURL(/#work$/);
+  await expect(page.locator('#work')).toBeInViewport();
+  await page.goForward();
+  await expect(page).toHaveURL(/#about$/);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('html')).not.toHaveClass(/\blenis\b/);
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.addInitScript(() => {
+    new MutationObserver(() => {
+      if (document.querySelector('#case-title > span[aria-hidden=true] > span')) {
+        document.documentElement.dataset.splitTitleMounted = '';
+      }
+    }).observe(document, { childList: true, subtree: true });
+  });
+  await page.goto('/project.html?id=cloud-portfolio');
+  const title = page.getByRole('heading', { level: 1, name: 'Portfolio website' });
+  await expect(title).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-split-title-mounted', '');
+  await expect(title.locator('span')).toHaveCount(0);
+  await page.locator('.case-header').screenshot({ path: testInfo.outputPath('case-header.png') });
+  await expectPageFits(page);
+});
+
+test('a blocked motion bundle leaves project content and links available', async ({ page }) => {
+  await page.route('**/assets/portfolio-motion.js', route => route.abort());
+  await page.goto('/project.html?id=cloud-portfolio');
+  await expect(page.getByRole('heading', { level: 1, name: 'Portfolio website' })).toBeVisible();
+  await page.getByRole('link', { name: '← Selected work', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Selected work', exact: true })).toBeInViewport();
+  await expect(page.locator('.work-card a')).toHaveCount(1);
 });

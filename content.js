@@ -3,9 +3,9 @@
 const portfolio = {
   contact: {
     email: "abdullahi.omer17@gmail.com",
-    linkedin: "https://www.linkedin.com/in/abdullahi-omer",
+    linkedin: "https://www.linkedin.com/in/abdullahiomer",
     github: "https://github.com/abdullahi-17",
-    resume: null, // Example local path: "assets/abdullahi-omer-resume.pdf"
+    resume: "assets/Resume - Abdullahi O.pdf", // Example local path: "assets/abdullahi-omer-resume.pdf"
   },
   projects: [
     {
@@ -16,6 +16,10 @@ const portfolio = {
       status: "Deployed on AWS / GitHub Actions verified",
       description:
         "A personal portfolio deployed on AWS, bringing together a static front end, Terraform infrastructure, CloudFront delivery and a Route 53 custom domain.",
+      workOverview: [
+        "CloudFront serves the site over HTTPS and reads the files from a private S3 bucket. Route 53 connects the custom domain, and Terraform describes the hosting infrastructure.",
+        "GitHub Actions runs browser checks against the same artifact it deploys. A guarded rollback workflow restores a previously tested release.",
+      ],
       image: "assets/cloud-architecture.svg",
       imageAlt:
         "Portfolio architecture: Route 53 resolves the domain to CloudFront, which reads static files from a private S3 origin using origin access control. ACM supplies the custom-domain certificate.",
@@ -37,7 +41,7 @@ const portfolio = {
       decisions:
         "A static front end keeps this portfolio simple: there is no application server or database to maintain. S3 stores the website files, while CloudFront is the public entry point. Terraform describes the hosting resources. Route 53 connects the domain to CloudFront through an alias record, and the custom-domain configuration accepts an ACM certificate in us-east-1.",
       implementation:
-        "The interface uses plain HTML, CSS and JavaScript without a build step. content.js holds project entries and link destinations; main.js renders and filters the gallery and loads each case study through project.html?id=…. Shared styles keep the home page and project pages consistent. The gallery supports buttons, arrow keys and native touch scrolling; focus indicators, a skip link and reduced-motion rules support accessible interaction.",
+        "The interface uses plain HTML, CSS and JavaScript, with an optional bundled motion enhancement. content.js holds project entries and link destinations; main.js renders project overviews on the homepage and supports existing case-study URLs. Shared styles keep the pages consistent. Focus indicators, a skip link and reduced-motion rules support accessible interaction.",
       architecture: [
         "Browser requests abdullahiomer.com",
         "CloudFront receives the HTTPS request",
@@ -121,6 +125,10 @@ const portfolio = {
       status: "School project / Team collaboration",
       description:
         "From five retail CSV files to a Power BI dashboard: an Azure data pipeline with typed SQL data, validation and documented error handling.",
+      workOverview: [
+        "Our CST8911 team used Azure Data Factory to load five CSV files from Blob Storage into Azure SQL. We cleaned and typed the data in SQL before exposing reporting views to Power BI.",
+        "My documented contribution focused on Power BI relationships, DAX measures, and dashboard filters. I also used SQL to compare financial totals.",
+      ],
       image: "assets/retail-dashboard.png",
       imageAlt:
         "Actual project Power BI dashboard with revenue and profit measures, monthly sales, country comparisons, and year and country filters.",
@@ -197,90 +205,34 @@ const portfolio = {
       category: "cloud",
       categoryLabel: "Cloud & Development",
       url: "https://spendwise.abdullahiomer.com",
-      title: "Spendwise",
-      status: "Planned / Development to come",
+      title: "SpendWise",
+      status: "Published browser demo / Simulated purchase",
       description:
-        "A future project. The brief, feature scope and implementation will be developed later.",
-      image: "assets/spendwise.svg",
-      imageAlt: "Spendwise project title card, clearly marked as planned.",
+        "A mindful-spending demo that lets visitors pause and reflect before a simulated purchase.",
+      workOverview: [
+        "The browser demo walks through a sample purchase and offers a reflection prompt. It runs in the browser using local rules and does not make purchases or save reflection history.",
+        "The static site is delivered through S3 and CloudFront. The optional API Gateway and Lambda service is separate from the browser demo.",
+      ],
+      image: "assets/SpendWise Logo on White.png",
+      imageAlt: "SpendWise logo with a navy and blue S, pause symbol and check mark on a white background.",
+      imageClass: "spendwise-cover",
       sections: [
         [
           "Project status",
-          "Spendwise is reserved as a future project in this portfolio. Development has not started as part of this site update.",
+          "The published browser demo uses a sample purchase and local rules.",
         ],
         [
           "Scope",
-          "The problem, intended users, features, architecture and tools have not been defined yet. This page will become a case study as the work is developed.",
+          "The browser demo covers a short purchase reflection. The mobile application architecture is a separate design.",
         ],
         [
-          "Next step",
-          "Write the project brief and decide on a small first version before choosing the implementation.",
+          "Optional API",
+          "The optional API Gateway and Lambda service is not needed for the browser demo.",
         ],
       ],
       github: null,
-      demo: null,
-      sourceNote: "Repository not available yet",
-      demoNote: "Demo not available yet",
-    },
-    {
-      id: "paper-trading",
-      category: "cloud",
-      categoryLabel: "Cloud & Development",
-      title: "Paper trading pipeline",
-      status: "AI-assisted exploration / Paper account only",
-      description:
-        "An AI-assisted cloud pipeline using a paper-trading API as its integration workload. The focus is scheduled execution, persistent state, deployment checks and monitoring.",
-      image: "assets/paper-trading.svg",
-      imageAlt:
-        "Software architecture sketch of a scheduler invoking a Python Lambda, with DynamoDB state and CloudWatch monitoring; labelled AI-assisted and paper account only.",
-      imageClass: "architecture-cover",
-      tools: [
-        "Python",
-        "AWS Lambda",
-        "EventBridge",
-        "DynamoDB",
-        "CloudWatch",
-        "AWS SAM",
-        "GitHub Actions",
-      ],
-      problem:
-        "The goal is to build an automated cloud pipeline that connects scheduled Python workloads, an external API, persistent state and operational monitoring. A simulated trading account provides the integration workload. The project’s objective is the engineering of that pipeline, not making money. This case study covers the repository’s Alpaca paper-account Lambda path.",
-      contribution:
-        "Most of the implementation was produced by AI. This is included as an AI-assisted exploration, with that authorship visible on both the project card and this page. My specific independent implementation work is not documented here. The useful discussion is the architecture, its operational constraints and what I can demonstrate and explain from the source.",
-      decisions:
-        "The documented Lambda path separates runtime strategy modules, infrastructure packaging, research tooling and tests. A scheduled invocation coordinates the external paper API with DynamoDB state and operational signals. The infrastructure and packaging checks make the shipped code boundary explicit. Secrets are resolved at runtime rather than included in the portfolio or published as configuration values.",
-      implementation:
-        "The repository documents a flat Lambda package with handler.market_tick as its entry point, built through infra/package.sh and checked by infra/verify_build.py. EventBridge schedules the workload, DynamoDB holds application state, and CloudWatch provides monitoring. The repository also contains a separate container-based path; that system is outside the scope of this short case study.",
-      architecture: [
-        "EventBridge schedule → Python Lambda entry point",
-        "Lambda → External Alpaca paper-account API",
-        "Lambda ↔ DynamoDB application state",
-        "CloudWatch / SNS → Operational signals",
-      ],
-      architectureLabel:
-        "Documented Lambda system connections, not a linear trading execution trace",
-      deployment:
-        "The README describes SAM-based AWS deployment and GitHub Actions with OIDC. That is repository documentation, not a newly verified deployment. This portfolio update did not run the system, access trading credentials, submit orders, change the strategy, or deploy the trading repository.",
-      extraSections: [
-        [
-          "Engineering goal",
-          "Develop a pipeline whose scheduled runs, API interactions, state updates and failure signals can be traced and checked. The areas to assess are repeatable deployment, correct packaging, state handling and monitoring. Trading returns are not the project’s success measure; these engineering goals still require supporting test and deployment evidence.",
-        ],
-        [
-          "Authorship & scope",
-          "AI assistance is central to this project and is disclosed as such. The repository is private, so this page provides a bounded technical summary without publishing its source or credentials. The entry is fourth in the portfolio, after the website, the school project and Spendwise.",
-        ],
-        [
-          "Verification limits",
-          "The review covered the README, infrastructure template and repository guidance. It did not rerun the suite or verify live resources. Strategy performance, profitability and current deployment health are not claimed. The repository guidance also identifies documentation drift between the Lambda and container paths, so this page deliberately identifies which architecture it describes.",
-        ],
-      ],
-      lessons:
-        "The learning focus is how scheduling, API integration, persistent state and monitoring fit into one cloud pipeline. AI produced most of the implementation, so understanding and verifying those connections is central to presenting the work accurately. Evidence should show how the pipeline runs and handles failures.",
-      github: null,
-      demo: null,
-      sourceNote: "Private repository",
-      demoNote: "No public demo / Paper-account system",
+      demo: "https://spendwise.abdullahiomer.com/demo.html",
+      sourceNote: "Repository link available on the project site",
     },
   ],
 };
